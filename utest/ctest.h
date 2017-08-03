@@ -22,7 +22,7 @@
 #endif
 #endif
 
-#ifndef WIN32 && !defined(__clang__)
+#if defined(WIN32) && !defined(__clang__)
 #define WEAK __attribute__ ((weak))
 #else
 #define WEAK

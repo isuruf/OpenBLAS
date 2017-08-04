@@ -47,3 +47,6 @@ test_script:
   - echo Running Test
   - cd c:\projects\OpenBLAS\utest
   - openblas_utest
+
+on_finish:
+- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

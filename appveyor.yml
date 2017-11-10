@@ -28,11 +28,13 @@ environment:
     CONDA_INSTALL_LOCN: C:\\Miniconda36-x64
   matrix:
     - COMPILER: clang-cl
+      DYNAMIC_ARCH: ON
       WITH_FORTRAN: yes
     - COMPILER: clang-cl
       DYNAMIC_ARCH: ON
       WITH_FORTRAN: no
     - COMPILER: cl
+      DYNAMIC_ARCH: OFF
 
 install:
   - if [%COMPILER%]==[clang-cl] call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
@@ -48,14 +50,16 @@ before_build:
   - echo Running cmake...
   - cd c:\projects\OpenBLAS
   - if [%COMPILER%]==[cl] cmake -G "Visual Studio 12 Win64" .
-  - if [%WITH_FORTRAN%]==[no] cmake -G "Ninja" -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl .
-  - if [%WITH_FORTRAN%]==[yes] cmake -G "NMake Makefiles" -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_Fortran_COMPILER=flang -DBUILD_WITHOUT_LAPACK=no -DNOFORTRAN=0 .
-  - if [%DYNAMIC_ARCH%]==[ON] cmake -DDYNAMIC_ARCH=ON .
+  - if [%WITH_FORTRAN%]==[no] cmake -G "Ninja" -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DDYNAMIC_ARCH=%DYNAMIC_ARCH% .
+  - if [%WITH_FORTRAN%]==[yes] cmake -G "NMake Makefiles" -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_Fortran_COMPILER=flang -DBUILD_WITHOUT_LAPACK=no -DNOFORTRAN=0 -DDYNAMIC_ARCH=%DYNAMIC_ARCH% .
 
 build_script:
   - cmake --build .
+  - ps: Compress-Archive -Path C:\projects\OpenBLAS\build\lib -DestinationPath C:\Projects\OpenBLAS\lib.zip
+  - ps: Push-AppveyorArtifact C:\Projects\OpenBLAS\lib.zip
 
 test_script:
   - echo Running Test
   - cd c:\projects\OpenBLAS\utest
   - openblas_utest
+

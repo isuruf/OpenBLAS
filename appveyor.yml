@@ -54,7 +54,7 @@ before_build:
   - if [%WITH_FORTRAN%]==[yes] cmake -G "NMake Makefiles JOM" -DCMAKE_CXX_COMPILER=clang-cl -DCMAKE_C_COMPILER=clang-cl -DCMAKE_Fortran_COMPILER=flang -DBUILD_WITHOUT_LAPACK=no -DNOFORTRAN=0 -DDYNAMIC_ARCH=%DYNAMIC_ARCH% .
 
 build_script:
-  - if [%WITH_FORTRAN%]==[yes] cmake --build . -- -j4
+  - if [%WITH_FORTRAN%]==[yes] jom
   - cmake --build .
   - ps: Compress-Archive -Path C:\projects\OpenBLAS\build\lib -DestinationPath C:\Projects\OpenBLAS\lib.zip
   - ps: Push-AppveyorArtifact C:\Projects\OpenBLAS\lib.zip

@@ -173,11 +173,6 @@ matrix:
       env:
         - BTYPE="BINARY=32"
 
-# whitelist
-branches:
-  only:
-    - master
-    - develop
 
 notifications:
   webhooks:
